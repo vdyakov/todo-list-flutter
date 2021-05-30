@@ -8,6 +8,6 @@ class Helper {
     return 'f${random.nextInt(1000000)}';
   }
 
-  static RowModel generateRow(title) =>
-      new RowModel(id: generateId(), title: title, completed: false);
+  static ListItemModel generateRow(title) =>
+      new ListItemModel(id: generateId(), title: title, completed: false);
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_flutter/data/api_util.dart';
+import 'package:todo_list_flutter/data/module/api_module.dart';
 import 'package:todo_list_flutter/helper/helper.dart';
 import 'package:todo_list_flutter/data/model/list_item_model.dart';
 import 'package:todo_list_flutter/presentation/add_form/add_form.dart';
@@ -13,13 +15,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // ToDo: реализовать загрузку данных с АПИ
-  List<RowModel> _data = [
-    Helper.generateRow('Test'),
-    Helper.generateRow('Test1'),
-    Helper.generateRow('Test2'),
-    Helper.generateRow('Test3'),
-  ];
+  ApiUtil? _apiUtil = ApiModule.apiUtil();
+
+  List<ListItemModel> _data = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _apiUtil!.getTodos().then((List<ListItemModel> result) {
+      setState(() {
+        _data = result;
+      });
+    });
+  }
 
   void handleAddToDo(String title) {
     if (title.isNotEmpty) {
@@ -31,7 +40,8 @@ class _HomePageState extends State<HomePage> {
 
   void handleRemoveItem(String itemId) {
     setState(() {
-      this._data = this._data.where((RowModel item) => item.id != itemId).toList();
+      this._data =
+          this._data.where((ListItemModel item) => item.id != itemId).toList();
     });
   }
 

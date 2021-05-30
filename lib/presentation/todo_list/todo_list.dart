@@ -4,7 +4,7 @@ import 'package:todo_list_flutter/data/model/list_item_model.dart';
 import 'package:todo_list_flutter/presentation/todo_item/todo_item.dart';
 
 class TodoList extends StatelessWidget {
-  final List<RowModel> todoList;
+  final List<ListItemModel> todoList;
   final Function(String) handleRemoveItem;
   final Function(String) handleCheckItem;
 
@@ -18,6 +18,9 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextStyle textStyle =
         const TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+
+    // sort by not completed items
+    this.todoList.sort((a, b) => !b.completed ? 1 : -1);
 
     return Card(
       child: InkWell(
@@ -35,7 +38,7 @@ class TodoList extends StatelessWidget {
                 ),
                 ...this.todoList.isEmpty
                     ? [Text('No Data to display')]
-                    : this.todoList.map((RowModel item) => TodoItem(
+                    : this.todoList.map((ListItemModel item) => TodoItem(
                           todoItem: item,
                           handleCheckItem: this.handleCheckItem,
                           handleRemoveItem: this.handleRemoveItem,
