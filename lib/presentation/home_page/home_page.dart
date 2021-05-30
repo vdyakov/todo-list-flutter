@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_flutter/helper/helper.dart';
 import 'package:todo_list_flutter/data/model/list_item_model.dart';
+import 'package:todo_list_flutter/presentation/add_form/add_form.dart';
+import 'package:todo_list_flutter/presentation/navigation/navigation.dart';
+import 'package:todo_list_flutter/presentation/todo_list/todo_list.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -20,81 +21,56 @@ class _HomePageState extends State<HomePage> {
     Helper.generateRow('Test3'),
   ];
 
+  void handleAddToDo(String title) {
+    if (title.isNotEmpty) {
+      setState(() {
+        this._data = [...this._data, Helper.generateRow(title)];
+      });
+    }
+  }
+
+  void handleRemoveItem(String itemId) {
+    setState(() {
+      this._data = this._data.where((RowModel item) => item.id != itemId).toList();
+    });
+  }
+
+  void handleCheckItem(String itemId) {
+    setState(() {
+      this._data = this._data.map((item) {
+        if (item.id == itemId) {
+          item.completed = true;
+        }
+
+        return item;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          tooltip: 'Menu',
-          onPressed: () {},
-        ),
-        title: Text(widget.title),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: CustomAppBar(title: 'Todo List Flutter'),
       ),
-      body: _getBody(),
-    );
-  }
-
-  // ToDo: вынести в отдельный класс
-  @protected
-  Widget _getBody() {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: ListView(
-          children: [
-            Card(
-              child: InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                child: SizedBox(
-                  height: 100,
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: _getRowInput(),
-                  ),
-                ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: ListView(
+            children: [
+              AddForm(
+                addToDo: this.handleAddToDo,
               ),
-            ),
-            ...List.generate(_data.length, (index) {
-              return Card(
-                child: ListTile(
-                  leading: FlutterLogo(),
-                  title: Text(_data[index].title.toString()),
-                  trailing: Icon(Icons.more_vert),
-                ),
-              );
-            }),
-          ],
+              TodoList(
+                todoList: this._data,
+                handleCheckItem: this.handleCheckItem,
+                handleRemoveItem: this.handleRemoveItem,
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  // ToDo: вынести в отдельный класс
-  Widget _getRowInput() {
-    final ButtonStyle buttonStyle =
-        ElevatedButton.styleFrom(fixedSize: Size(30, 20));
-
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: null,
-            decoration: InputDecoration(
-              hintText: 'What do you want to do?',
-            ),
-          ),
-        ),
-        SizedBox(width: 20),
-        SizedBox(
-          width: 60,
-          child: ElevatedButton(
-            style: buttonStyle,
-            onPressed: () {},
-            child: Text('ADD'),
-          ),
-        ),
-      ],
     );
   }
 }
