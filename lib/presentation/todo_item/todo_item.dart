@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_flutter/data/model/list_item_model.dart';
 
 class TodoItem extends StatelessWidget {
-  final RowModel todoItem;
+  final ListItemModel todoItem;
   final Function(String) handleRemoveItem;
   final Function(String) handleCheckItem;
 
@@ -34,7 +34,7 @@ class TodoItem extends StatelessWidget {
   }
 
   @protected
-  Widget _getCheckIcon(RowModel model) {
+  Widget _getCheckIcon(ListItemModel model) {
     return !model.completed
         ? IconButton(
             icon: const Icon(Icons.circle_outlined),
